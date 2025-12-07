@@ -1,12 +1,43 @@
+import HeroSection from "../components/heroSection";
+import CategoryMenu from "../components/categoryMenu";
+import VideoList from "../components/videoList";
+import { useState } from "react";
+import { videoData } from "../data/videoData";
 function Homepage() {
+  const [selectedCategory, setSelectedCategory] = useState("Semua Kelas");
+  const [videos, setVideos] = useState(videoData);
+  // -----------------------------
+  // 1. ADD VIDEO
+  // -----------------------------
+  const addVideo = (newVideo) => {
+    setVideos([...videos, newVideo]);
+  };
+
+  // -----------------------------
+  // 2. DELETE VIDEO
+  // -----------------------------
+  const deleteVideo = (id) => {
+    setVideos(videos.filter((video) => video.id !== id));
+  };
+
+  // -----------------------------
+  // 3. UPDATE VIDEO
+  // -----------------------------
+  const updateVideo = (updatedVideo) => {
+    setVideos(
+      videos.map((video) =>
+        video.id === updatedVideo.id ? updatedVideo : video
+      )
+    );
+  };
   return (
-    <div className="font-sans text-gray-800">
+    <div className="font-sans text-gray-800 bg-[#f5f5dc]">
       {/* NAVBAR */}
-      <nav className="flex justify-between items-center px-6 py-4 shadow bg-white">
+      <nav className="flex justify-between items-center px-6 py-8 shadow bg-gray-200 rounded-xl">
         <img className="w-32 md:w-40" src="/img/videobelajar.png" alt="logo" />
 
         <div className="flex items-center gap-4 md:gap-6">
-          <span className="cursor-pointer font-semibold hidden md:block">
+          <span className="cursor-pointer font-semibold hidden md:block hover:text-orange-500">
             Kategori
           </span>
           <img className="w-8 md:w-10" src="/img/profile.png" alt="avatar" />
@@ -32,7 +63,7 @@ function Homepage() {
             tinggi dengan latihan interaktif.
           </p>
 
-          <button className="bg-orange-500 mt-4 md:mt-6 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-lg hover:opacity-80">
+          <button className="bg-orange-500 cursor-pointer mt-4 md:mt-6 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-lg hover:bg-orange-600">
             Temukan Video Course!
           </button>
         </div>
@@ -80,13 +111,32 @@ function Homepage() {
             key={i}
             src={`/img/${card}`}
             alt={`card-${i}`}
-            className="rounded-lg shadow"
+            className="border rounded-lg  hover:scale-105 transituion-transform duration-200 shadow hover:shadow-lg cursor-pointer"
           />
         ))}
       </div>
 
+      <h2 className="text-2xl font-bold mb-5 text-gray-800 px-10 mt-10">
+        Daftar Video Saya:
+      </h2>
+      <div>
+        <HeroSection />
+        {/* PASSING state & function ke CategoryMenu */}
+        <CategoryMenu
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+        {/* PASSING videos & selectedCategory ke VideoList */}
+        <VideoList
+          videos={videos}
+          selectedCategory={selectedCategory}
+          deleteVideo={deleteVideo}
+          updateVideo={updateVideo}
+        />
+      </div>
+
       {/* NEWSLETTER */}
-      <section className="relative mt-20 px-4">
+      <section className="relative mt-16 px-4">
         <img
           className="w-full h-[280px] md:h-[400px] object-cover rounded-lg brightness-50"
           src="/img/closehero.jpg"
@@ -109,7 +159,7 @@ function Homepage() {
               className="px-3 md:px-4 py-2 md:py-3 rounded-l-lg bg-white text-black w-40 md:w-64 text-sm md:text-base"
               placeholder="Masukkan email"
             />
-            <button className="bg-orange-500 text-white px-4 md:px-5 rounded-r-lg hover:opacity-80 text-sm md:text-base">
+            <button className="bg-orange-500 text-white px-4 md:px-5 rounded-r-lg hover:bg-orange-600 cursor-pointer text-sm md:text-base">
               Subscribe
             </button>
           </div>

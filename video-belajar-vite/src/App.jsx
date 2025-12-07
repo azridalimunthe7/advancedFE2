@@ -5,7 +5,7 @@ import Register from "./pages/Register.jsx"; // import Register.jsx
 
 function App() {
   return (
-    // <BrowserRouter> wajib ini induk semuanya
+    // <BrowserRouter> wajib!
     <BrowserRouter>
       {/* <Routes> ini route library react */}
       <Routes>

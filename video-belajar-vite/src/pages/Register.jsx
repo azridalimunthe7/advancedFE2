@@ -83,7 +83,7 @@ function Register() {
             Lupa Password?
           </p>
 
-          {/* BUTTONS */}
+          {/* BUTTONS DAFTAR */}
           <Button type="submit">Masuk</Button>
 
           <Button type="submit">Daftar</Button>
