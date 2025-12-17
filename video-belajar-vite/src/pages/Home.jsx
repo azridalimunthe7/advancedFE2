@@ -3,26 +3,104 @@ import CategoryMenu from "../components/categoryMenu";
 import VideoList from "../components/videoList";
 import { useState } from "react";
 import { videoData } from "../data/videoData";
+import axiosClient from "../service/api.js";
+import { useEffect } from "react";
 function Homepage() {
   const [selectedCategory, setSelectedCategory] = useState("Semua Kelas");
   const [videos, setVideos] = useState(videoData);
-  // -----------------------------
+
+  //State Tambah Card Video(Create/Post)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newCourse, setNewCourse] = useState({
+    name: "",
+  });
+
+  //Function Tambah Card Video(Create/Post)
+  const createCourse = async () => {
+    try {
+      const response = await axiosClient.post("/courses", newCourse);
+
+      // tampilkan card baru
+      setCourses([...courses, response.data]);
+
+      // reset form
+      setNewCourse({ name: "" });
+
+      // TUTUP MODAL OTOMATIS
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // State Pengambilan Data Dari MockAPI(Read/Get)
+  const [courses, setCourses] = useState([]);
+
+  // Function Pengambilan Data Dari MockAPI(Read/Get)
+  useEffect(() => {
+    getCourses();
+  }, []);
+  const getCourses = async () => {
+    try {
+      const response = await axiosClient.get("/courses");
+      setCourses(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  //State Edit Card Video(Update/Put)
+  // State Edit Course
+  const [editingId, setEditingId] = useState(null);
+  const [editedName, setEditedName] = useState("");
+
+  //Function Edit Card Video(Update/Put)
+  const updateCourse = async (id) => {
+    try {
+      const response = await axiosClient.put(`/courses/${id}`, {
+        name: editedName,
+      });
+
+      // Update state courses tanpa reload
+      const updatedCourses = courses.map((course) =>
+        course.id === id ? response.data : course
+      );
+
+      setCourses(updatedCourses);
+
+      // Reset edit mode
+      setEditingId(null);
+      setEditedName("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Function Delete Card Video(Delete/Delete)
+  const deleteCourse = async (id) => {
+    try {
+      await axiosClient.delete(`/courses/${id}`);
+
+      // Hapus dari state
+      const filteredCourses = courses.filter((course) => course.id !== id);
+
+      setCourses(filteredCourses);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // 1. ADD VIDEO
-  // -----------------------------
   const addVideo = (newVideo) => {
     setVideos([...videos, newVideo]);
   };
 
-  // -----------------------------
   // 2. DELETE VIDEO
-  // -----------------------------
   const deleteVideo = (id) => {
     setVideos(videos.filter((video) => video.id !== id));
   };
 
-  // -----------------------------
   // 3. UPDATE VIDEO
-  // -----------------------------
   const updateVideo = (updatedVideo) => {
     setVideos(
       videos.map((video) =>
@@ -116,6 +194,7 @@ function Homepage() {
         ))}
       </div>
 
+      {/* Daftar Video Saya */}
       <h2 className="text-2xl font-bold mb-5 text-gray-800 px-10 mt-10">
         Daftar Video Saya:
       </h2>
@@ -126,6 +205,17 @@ function Homepage() {
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
         />
+
+        <div>
+          <button
+            className="
+            mb-6 bg-orange-500 text-white px-4 py-2 rounded 
+            hover:bg-orange-600 ml-10 cursor-pointer"
+            onClick={addVideo}
+          >
+            Tambah Course Saya
+          </button>
+        </div>
         {/* PASSING videos & selectedCategory ke VideoList */}
         <VideoList
           videos={videos}
@@ -134,6 +224,153 @@ function Homepage() {
           updateVideo={updateVideo}
         />
       </div>
+
+      <h2 className="text-2xl font-bold mb-5 text-gray-800 px-10 mt-20">
+        Daftar Video Baru:
+      </h2>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="
+          mb-6 bg-orange-500 text-white px-4 py-2 rounded
+          hover:bg-orange-600 ml-10 cursor-pointer"
+      >
+        Tambah Course
+      </button>
+
+      {/*Pengambilan Data Courses dari MockAPI (Read/Get) */}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 px-4 md:px-10 mt-10">
+        {courses.map((course) => (
+          <div
+            key={course.id}
+            className="
+        bg-white 
+        rounded-lg 
+        p-4 
+        border 
+        shadow 
+        hover:shadow-lg 
+        hover:scale-[1.02] 
+        transition 
+        cursor-pointer
+
+        /* RESPONSIVE */
+        w-full
+        max-w-[300px]        /* batas maksimal card */
+        mx-auto              /* center di mobile */
+      "
+          >
+            <img
+              src={course.image}
+              alt={course.name}
+              className="
+          w-full 
+          h-36 sm:h-40 md:h-44 
+          object-cover 
+          rounded-lg
+        "
+            />
+
+            <div className="p-4">
+              {editingId === course.id ? (
+                <input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              ) : (
+                <h2 className="text-lg font-bold">{course.name}</h2>
+              )}
+
+              <div className="flex justify-between mt-2">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setEditingId(course.id);
+                      setEditedName(course.name);
+                    }}
+                    className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm
+                    hoover:bg-yellow-600 cursor-pointer"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => updateCourse(course.id)}
+                    className="px-3 py-1 bg-green-600 text-white rounded text-sm
+                    hover:bg-green-700 cursor-pointer"
+                  >
+                    Simpan
+                  </button>
+                </div>
+
+                <div>
+                  <button
+                    onClick={() => deleteCourse(course.id)}
+                    className="px-3 py-1 bg-red-600 text-white rounded text-sm
+                    hover:bg-red-700 cursor-pointer"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/*Tambah Card Video(Create/Post)*/}
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+            {/* TOMBOL CLOSE */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl
+              hoover:bg-gray-100 cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-xl font-bold mb-4">Tambah Course</h2>
+
+            <input
+              type="text"
+              placeholder="Nama Tutor"
+              value={newCourse.name}
+              onChange={(e) =>
+                setNewCourse({ ...newCourse, name: e.target.value })
+              }
+              className="border p-2 rounded w-full mb-3"
+            />
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="
+                px-4 py-2 border rounded hover:shadow-lg 
+                hover:scale-[1.02] 
+                transition cursor-pointer"
+              >
+                Batal
+              </button>
+
+              <button
+                onClick={createCourse}
+                className="
+                px-4 py-2 bg-orange-500 text-white rounded
+                cursor-pointer hover:shadow-lg 
+                hover:scale-[1.02] 
+                transition "
+              >
+                Tambah
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* NEWSLETTER */}
       <section className="relative mt-16 px-4">
