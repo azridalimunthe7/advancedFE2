@@ -1,10 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.jsx"; // <--- Panggil App.jsx biar bisa jalan
+import { Provider } from "react-redux";
+import { store } from "./store/redux/store.js";
+import App from "./App.jsx"; // <--- Panggil App.jsx agar bisa jalan
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </StrictMode>
 );
