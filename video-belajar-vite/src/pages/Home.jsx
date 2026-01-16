@@ -56,9 +56,9 @@ function Homepage() {
     );
   };
   return (
-    <div className="font-sans text-gray-800  bg-sky-300">
+    <div className="font-sans text-gray-800  bg-cyan-50">
       {/* NAVBAR */}
-      <nav className="flex justify-between items-center px-6 py-8 shadow bg-sky-100 rounded-2xl">
+      <nav className="flex justify-between items-center px-6 py-8 shadow bg-white">
         <img className="w-32 md:w-40" src="/img/videobelajar.png" alt="logo" />
 
         <div className="flex items-center gap-4 md:gap-6">
