@@ -8,4 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(), // <--- 2. Panggil tailwind di sini
   ],
+  base: process.env.VITE_BASE_PATH || "/advancedFE2",
 });
