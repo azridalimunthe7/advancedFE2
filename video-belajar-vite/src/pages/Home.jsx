@@ -51,8 +51,8 @@ function Homepage() {
   const updateVideo = (updatedVideo) => {
     setVideos(
       videos.map((video) =>
-        video.id === updatedVideo.id ? updatedVideo : video
-      )
+        video.id === updatedVideo.id ? updatedVideo : video,
+      ),
     );
   };
   return (
