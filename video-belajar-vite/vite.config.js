@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(), // <--- 2. Panggil tailwind di sini
   ],
-  base: "/advancedFE2",
+  base: "/advancedFE2/",
 });
