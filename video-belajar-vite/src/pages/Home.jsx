@@ -38,8 +38,14 @@ function Homepage() {
   };
 
   // 1. ADD VIDEO
+  const DEFAULT_IMAGE = "/img/pengembangandiri.jpg";
   const addVideo = (newVideo) => {
-    setVideos([...videos, newVideo]);
+    const videoWithDefaultImage = {
+      ...newVideo,
+      image: DEFAULT_IMAGE,
+    };
+
+    setVideos([...videos, videoWithDefaultImage]);
   };
 
   // 2. DELETE VIDEO
@@ -158,9 +164,17 @@ function Homepage() {
             className="
             mb-6 bg-orange-500 text-white px-4 py-2 rounded 
             hover:bg-orange-600 ml-10 cursor-pointer"
-            onClick={addVideo}
+            onClick={() =>
+              addVideo({
+                id: Date.now(),
+                title: "New Courses",
+                category: "Pemasaran",
+                instructor: "Azrian Johansen",
+                image: DEFAULT_IMAGE,
+              })
+            }
           >
-            Tambah Course Saya
+            Tambah Video Saya
           </button>
         </div>
         {/* PASSING videos & selectedCategory ke VideoList */}
